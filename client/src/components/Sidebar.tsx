@@ -6,6 +6,7 @@ import { type Service } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
+import { Link } from "wouter";
 
 interface SidebarProps {
   services: Service[];
@@ -204,13 +205,15 @@ export default function Sidebar({
       <div className="mt-6 border-t pt-4">
         <h3 className="text-md font-semibold mb-3">Project Actions</h3>
         <div className="space-y-2">
-          <Button 
-            variant="outline" 
-            className="w-full justify-start"
-          >
-            <CircleDotDashed className="mr-2 h-4 w-4" /> 
-            Visualize Architecture
-          </Button>
+          <Link href="/architecture">
+            <Button 
+              variant="outline" 
+              className="w-full justify-start"
+            >
+              <CircleDotDashed className="mr-2 h-4 w-4" /> 
+              Visualize Architecture
+            </Button>
+          </Link>
           <Button 
             variant="outline" 
             className="w-full justify-start"

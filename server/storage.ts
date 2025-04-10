@@ -35,7 +35,24 @@ export class MemStorage implements IStorage {
   // Create a new service
   async createService(serviceData: InsertService): Promise<Service> {
     const id = this.currentId++;
-    const service: Service = { ...serviceData, id };
+    
+    // Create a properly typed Service object
+    const service: Service = { 
+      id,
+      name: serviceData.name,
+      buildSystem: serviceData.buildSystem,
+      language: serviceData.language,
+      springBootVersion: serviceData.springBootVersion,
+      group: serviceData.group,
+      artifact: serviceData.artifact,
+      description: serviceData.description,
+      packageName: serviceData.packageName,
+      packaging: serviceData.packaging,
+      javaVersion: serviceData.javaVersion,
+      dependencies: Array.isArray(serviceData.dependencies) ? serviceData.dependencies : [],
+      relationships: Array.isArray(serviceData.relationships) ? serviceData.relationships : []
+    };
+    
     this.services.set(id, service);
     return service;
   }
