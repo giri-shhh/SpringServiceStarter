@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Moon, Sun, Github, Menu } from "lucide-react";
+import { Moon, Sun, Github, Menu, LayoutDashboard, Home } from "lucide-react";
+import { Link, useLocation } from "wouter";
 
 export default function Header() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [location] = useLocation();
 
   // Toggle dark mode
   const toggleDarkMode = () => {
@@ -35,14 +37,38 @@ export default function Header() {
           >
             <Menu className="h-5 w-5" />
           </Button>
-          <div className="flex items-center">
-            <img 
-              src="https://spring.io/img/logos/spring-initializr.svg" 
-              alt="Spring logo" 
-              className="h-8 mr-2"
-            />
-            <h1 className="text-xl font-semibold">Microservice Architect</h1>
-          </div>
+          <Link href="/">
+            <div className="flex items-center cursor-pointer">
+              <img 
+                src="https://spring.io/img/logos/spring-initializr.svg" 
+                alt="Spring logo" 
+                className="h-8 mr-2"
+              />
+              <h1 className="text-xl font-semibold">Microservice Architect</h1>
+            </div>
+          </Link>
+        </div>
+        <div className="hidden md:flex items-center space-x-1">
+          <Link href="/">
+            <Button 
+              variant={location === "/" ? "secondary" : "ghost"} 
+              size="sm" 
+              className="font-medium"
+            >
+              <Home className="h-4 w-4 mr-2" />
+              Services
+            </Button>
+          </Link>
+          <Link href="/dashboard">
+            <Button 
+              variant={location === "/dashboard" ? "secondary" : "ghost"} 
+              size="sm" 
+              className="font-medium"
+            >
+              <LayoutDashboard className="h-4 w-4 mr-2" />
+              Dashboard
+            </Button>
+          </Link>
         </div>
         <div className="flex items-center">
           <Button 

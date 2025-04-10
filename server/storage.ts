@@ -36,6 +36,27 @@ export class MemStorage implements IStorage {
   async createService(serviceData: InsertService): Promise<Service> {
     const id = this.currentId++;
     
+    // Convert dependencies and relationships to ensure they have the right type
+    const dependencies: string[] = [];
+    if (Array.isArray(serviceData.dependencies)) {
+      serviceData.dependencies.forEach(dep => {
+        dependencies.push(String(dep));
+      });
+    }
+    
+    const relationships: Relationship[] = [];
+    if (Array.isArray(serviceData.relationships)) {
+      serviceData.relationships.forEach(rel => {
+        if (typeof rel === 'object' && rel !== null) {
+          relationships.push({
+            sourceServiceId: Number(rel.sourceServiceId),
+            targetServiceId: Number(rel.targetServiceId),
+            communicationType: String(rel.communicationType)
+          });
+        }
+      });
+    }
+    
     // Create a properly typed Service object
     const service: Service = { 
       id,
@@ -49,8 +70,8 @@ export class MemStorage implements IStorage {
       packageName: serviceData.packageName,
       packaging: serviceData.packaging,
       javaVersion: serviceData.javaVersion,
-      dependencies: Array.isArray(serviceData.dependencies) ? serviceData.dependencies : [],
-      relationships: Array.isArray(serviceData.relationships) ? serviceData.relationships : []
+      dependencies,
+      relationships
     };
     
     this.services.set(id, service);

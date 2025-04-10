@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, CircleDotDashed, Code, Download, Pencil, Trash } from "lucide-react";
+import { PlusCircle, CircleDotDashed, Code, Download, Pencil, Trash, BarChart3 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { type Service } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
@@ -205,6 +205,15 @@ export default function Sidebar({
       <div className="mt-6 border-t pt-4">
         <h3 className="text-md font-semibold mb-3">Project Actions</h3>
         <div className="space-y-2">
+          <Link href="/dashboard">
+            <Button 
+              variant="outline" 
+              className="w-full justify-start"
+            >
+              <BarChart3 className="mr-2 h-4 w-4" /> 
+              Dashboard
+            </Button>
+          </Link>
           <Link href="/architecture">
             <Button 
               variant="outline" 
