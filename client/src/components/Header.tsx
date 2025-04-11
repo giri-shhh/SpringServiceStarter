@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Moon, Sun, Github, Menu, LayoutDashboard, Home } from "lucide-react";
+import { Moon, Sun, Github, Menu, LayoutDashboard, Home, GitBranchPlus } from "lucide-react";
 import { Link, useLocation } from "wouter";
 
 export default function Header() {
@@ -67,6 +67,16 @@ export default function Header() {
             >
               <LayoutDashboard className="h-4 w-4 mr-2" />
               Dashboard
+            </Button>
+          </Link>
+          <Link href="/architecture">
+            <Button 
+              variant={location === "/architecture" ? "secondary" : "ghost"} 
+              size="sm" 
+              className="font-medium"
+            >
+              <GitBranchPlus className="h-4 w-4 mr-2" />
+              Architecture
             </Button>
           </Link>
         </div>
