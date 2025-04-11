@@ -4,7 +4,13 @@ import { Check, ChevronRight, Circle } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
-const MenubarMenu = MenubarPrimitive.Menu
+const MenubarMenu = React.forwardRef<
+  React.ElementRef<typeof MenubarPrimitive.Menu>,
+  React.ComponentPropsWithoutRef<typeof MenubarPrimitive.Menu>
+>(({ ...props }, ref) => (
+  <MenubarPrimitive.Menu ref={ref} {...props} />
+))
+MenubarMenu.displayName = MenubarPrimitive.Menu.displayName
 
 const MenubarGroup = MenubarPrimitive.Group
 
@@ -110,7 +116,7 @@ const MenubarItem = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof MenubarPrimitive.Item> & {
     inset?: boolean
   }
->(({ className, inset, ...props }, ref) => (
+>(({ className, inset, children, ...props }, ref) => (
   <MenubarPrimitive.Item
     ref={ref}
     className={cn(
@@ -119,7 +125,9 @@ const MenubarItem = React.forwardRef<
       className
     )}
     {...props}
-  />
+  >
+    {typeof children === 'object' && 'value' in (children as any) ? (children as any).value : children}
+  </MenubarPrimitive.Item>
 ))
 MenubarItem.displayName = MenubarPrimitive.Item.displayName
 
