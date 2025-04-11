@@ -420,7 +420,7 @@ export default function CreateServiceModal({ isOpen, onClose }: CreateServiceMod
                           </SelectTrigger>
                           <SelectContent>
                             {serviceTypes.map(type => (
-                              <SelectItem key={type.id} value={type.id}>
+                              <SelectItem key={type.id} value={type.id} textValue={type.name}>
                                 {type.name}
                               </SelectItem>
                             ))}
@@ -524,7 +524,7 @@ export default function CreateServiceModal({ isOpen, onClose }: CreateServiceMod
                             </SelectTrigger>
                             <SelectContent>
                               {languages.map(lang => (
-                                <SelectItem key={lang} value={lang}>
+                                <SelectItem key={lang} value={lang} textValue={lang}>
                                   {lang}
                                 </SelectItem>
                               ))}
@@ -545,7 +545,7 @@ export default function CreateServiceModal({ isOpen, onClose }: CreateServiceMod
                             </SelectTrigger>
                             <SelectContent>
                               {springBootVersions.map(version => (
-                                <SelectItem key={version} value={version}>
+                                <SelectItem key={version} value={version} textValue={version}>
                                   {version}
                                 </SelectItem>
                               ))}
@@ -567,13 +567,16 @@ export default function CreateServiceModal({ isOpen, onClose }: CreateServiceMod
                               <SelectValue placeholder="Select build system" />
                             </SelectTrigger>
                             <SelectContent>
-                              {buildSystems.map(system => (
-                                <SelectItem key={system} value={system}>
-                                  {system === "maven" ? "Maven" : 
-                                   system === "gradle-groovy" ? "Gradle (Groovy)" : 
-                                   "Gradle (Kotlin)"}
-                                </SelectItem>
-                              ))}
+                              {buildSystems.map(system => {
+                                const label = system === "maven" ? "Maven" : 
+                                            system === "gradle-groovy" ? "Gradle (Groovy)" : 
+                                            "Gradle (Kotlin)";
+                                return (
+                                  <SelectItem key={system} value={system} textValue={label}>
+                                    {label}
+                                  </SelectItem>
+                                );
+                              })}
                             </SelectContent>
                           </Select>
                         </div>
@@ -591,7 +594,7 @@ export default function CreateServiceModal({ isOpen, onClose }: CreateServiceMod
                             </SelectTrigger>
                             <SelectContent>
                               {javaVersions.map(version => (
-                                <SelectItem key={version} value={version}>
+                                <SelectItem key={version} value={version} textValue={version}>
                                   {version}
                                 </SelectItem>
                               ))}
