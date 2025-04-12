@@ -8,7 +8,7 @@ export default function ArchitecturePage() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
-      
+
       <div className="container mx-auto px-4 py-6 flex-1">
         <div className="mb-4 flex justify-between items-center">
           <div className="flex items-center">
@@ -21,11 +21,11 @@ export default function ArchitecturePage() {
             <h1 className="text-2xl font-semibold">Microservice Architecture Visualization</h1>
           </div>
         </div>
-        
+
         <div className="mt-4">
           <ArchitectureVisualization />
         </div>
-        
+
         <div className="mt-6 bg-white p-4 rounded-lg shadow-sm">
           <h2 className="text-lg font-medium mb-3">Legend</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -42,7 +42,7 @@ export default function ArchitecturePage() {
               <span>gRPC Connections</span>
             </div>
           </div>
-          
+
           <div className="mt-4 text-sm text-gray-600">
             <p><strong>Tip:</strong> You can zoom, pan, and rearrange nodes in the diagram. Use the layout options to automatically reorganize the services.</p>
           </div>

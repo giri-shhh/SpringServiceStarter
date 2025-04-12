@@ -1,39 +1,14 @@
 
-import { useState } from "react";
 import Header from "@/components/Header";
-import Sidebar from "@/components/Sidebar";
-import MainContent from "@/components/MainContent";
-import CreateServiceModal from "@/components/CreateServiceModal";
-import { useServices } from "@/hooks/use-services";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FileCode, ArrowRight, Cloud, GitBranchPlus, Settings } from "lucide-react";
+import { FileCode, ArrowRight, Cloud, GitBranchPlus } from "lucide-react";
+import { navigate } from "wouter/use-browser-location";
 
 export default function Home() {
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [activeServiceId, setActiveServiceId] = useState<number | null>(null);
-  const { services } = useServices();
-
-  const handleCreateService = () => {
-    setIsCreateModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsCreateModalOpen(false);
-  };
-
-  const handleSelectService = (serviceId: number) => {
-    setActiveServiceId(serviceId);
-  };
-
-  const activeService = activeServiceId !== null 
-    ? services.find(service => service.id === activeServiceId) 
-    : null;
-
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
-      
       <div className="container mx-auto px-4 py-6">
         {/* Hero Section */}
         <div className="text-center mb-12">
@@ -44,12 +19,12 @@ export default function Home() {
             Design, generate, and manage your Spring Boot microservices architecture with ease.
             Create production-ready services with best practices built-in.
           </p>
-          <Button 
-            onClick={handleCreateService}
+          <Button
+            onClick={() => navigate("/dashboard")}
             size="lg"
             className="bg-gradient-to-r from-green-600 to-blue-600 text-white hover:from-green-700 hover:to-blue-700"
           >
-            Create New Service
+            Get Started...
             <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
         </div>
@@ -92,26 +67,45 @@ export default function Home() {
             </CardContent>
           </Card>
         </div>
+        {/* Features Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
 
-        {/* Main Content */}
-        <div className="flex flex-col md:flex-row gap-6 flex-1">
-          <Sidebar 
-            services={services}
-            activeServiceId={activeServiceId}
-            onSelectService={handleSelectService}
-            onCreateService={handleCreateService}
-          />
-          
-          <MainContent 
-            activeService={activeService}
-          />
+          {/* Additional Feature Cards */}
+          <Card>
+            <CardHeader>
+              <CardTitle>API Integration</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-600">
+                Easily integrate external APIs to enhance your microservices and their functionalities.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Deployment Automation</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-600">
+                Automate your deployments using CI/CD pipelines for seamless updates and rollbacks.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Monitoring & Logging</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-600">
+                Monitor your services and manage logs effectively to ensure high availability.
+              </p>
+            </CardContent>
+          </Card>
+
         </div>
       </div>
-
-      <CreateServiceModal 
-        isOpen={isCreateModalOpen} 
-        onClose={handleCloseModal}
-      />
-    </div>
+    </div >
   );
 }

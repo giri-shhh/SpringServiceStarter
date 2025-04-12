@@ -59,7 +59,7 @@ export default function ArchitectureVisualization() {
   const generateNodes = useCallback((services: Service[], layout: string) => {
     return services.map((service, index) => {
       let position = { x: 0, y: 0 };
-      
+
       // Calculate position based on layout
       if (layout === 'horizontal') {
         position = { x: index * 300, y: 100 };
@@ -73,7 +73,7 @@ export default function ArchitectureVisualization() {
           y: radius * Math.sin(angle) + 300,
         };
       }
-      
+
       // Create node
       return {
         id: service.id.toString(),
@@ -92,7 +92,7 @@ export default function ArchitectureVisualization() {
   // Convert relationships to edges
   const generateEdges = useCallback((services: Service[]) => {
     const edges: Edge[] = [];
-    
+
     services.forEach(service => {
       if (service.relationships && service.relationships.length > 0) {
         service.relationships.forEach((rel: Relationship) => {
@@ -112,7 +112,7 @@ export default function ArchitectureVisualization() {
         });
       }
     });
-    
+
     return edges;
   }, []);
 
@@ -137,16 +137,16 @@ export default function ArchitectureVisualization() {
       setEdges(generateEdges(services));
     }
   }, [services, selectedLayout, generateNodes, generateEdges, setNodes, setEdges]);
-  
+
   // Download the architecture diagram as an image
   const downloadAsPNG = () => {
     const flowElement = document.querySelector('.react-flow') as HTMLElement;
     if (!flowElement) return;
-    
+
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-    
+
     // Use html2canvas or similar approach (simplified here)
     alert('Download functionality will be implemented with a proper library like html2canvas.');
   };
@@ -170,7 +170,7 @@ export default function ArchitectureVisualization() {
         <Controls />
         <MiniMap />
         <Background />
-        
+
         <Panel position="top-right">
           <div className="space-y-2">
             <div className="bg-white p-2 rounded shadow-sm space-x-2">
@@ -207,17 +207,6 @@ export default function ArchitectureVisualization() {
           </div>
         </Panel>
       </ReactFlow>
-      
-      {services.length === 0 && (
-        <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75">
-          <div className="text-center p-6">
-            <h3 className="text-xl font-semibold mb-2">No Services to Visualize</h3>
-            <p className="text-gray-600 mb-4">
-              Create at least one microservice to visualize the architecture.
-            </p>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

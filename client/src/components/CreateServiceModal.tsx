@@ -2,13 +2,13 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle, 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
   DialogFooter,
-  DialogDescription 
+  DialogDescription
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -171,41 +171,41 @@ const cloudProviders = [
 
 // Service types to offer preconfigured setups
 const serviceTypes = [
-  { 
-    id: "basic", 
-    name: "Basic Service", 
+  {
+    id: "basic",
+    name: "Basic Service",
     description: "Simple REST API service",
-    dependencies: ["web", "actuator"] 
+    dependencies: ["web", "actuator"]
   },
-  { 
-    id: "data", 
-    name: "Data Service", 
+  {
+    id: "data",
+    name: "Data Service",
     description: "Service with database access",
-    dependencies: ["web", "data-jpa", "actuator", "h2"] 
+    dependencies: ["web", "data-jpa", "actuator", "h2"]
   },
-  { 
-    id: "gateway", 
-    name: "API Gateway", 
+  {
+    id: "gateway",
+    name: "API Gateway",
     description: "Entry point for the microservice architecture",
-    dependencies: ["gateway", "eureka", "actuator"] 
+    dependencies: ["gateway", "eureka", "actuator"]
   },
-  { 
-    id: "discovery", 
-    name: "Discovery Server", 
+  {
+    id: "discovery",
+    name: "Discovery Server",
     description: "Service registry for microservices",
-    dependencies: ["eureka-server", "actuator"] 
+    dependencies: ["eureka-server", "actuator"]
   },
-  { 
-    id: "config", 
-    name: "Config Server", 
+  {
+    id: "config",
+    name: "Config Server",
     description: "Centralized configuration server",
-    dependencies: ["config-server", "actuator"] 
+    dependencies: ["config-server", "actuator"]
   },
-  { 
-    id: "auth", 
-    name: "Auth Service", 
+  {
+    id: "auth",
+    name: "Auth Service",
     description: "Authentication and authorization service",
-    dependencies: ["web", "security", "data-jpa", "h2", "actuator"] 
+    dependencies: ["web", "security", "data-jpa", "h2", "actuator"]
   }
 ];
 
@@ -238,7 +238,7 @@ export default function CreateServiceModal({ isOpen, onClose }: CreateServiceMod
   const [currentTab, setCurrentTab] = useState("basic");
   const [selectedDependencies, setSelectedDependencies] = useState<string[]>(["web", "actuator"]);
   const [selectedServiceType, setSelectedServiceType] = useState("basic");
-  
+
   // Setup the form with default values
   const form = useForm<CreateServiceFormData>({
     resolver: zodResolver(createServiceSchema),
@@ -258,12 +258,12 @@ export default function CreateServiceModal({ isOpen, onClose }: CreateServiceMod
       relationships: [],
     },
   });
-  
+
   // Watch for name, group, and artifact changes to update packageName
   const watchName = form.watch("name");
   const watchGroup = form.watch("group");
   const watchArtifact = form.watch("artifact");
-  
+
   // Auto-update artifact when name changes
   if (watchName && !form.getValues("artifact")) {
     const kebabCaseName = watchName
@@ -272,14 +272,15 @@ export default function CreateServiceModal({ isOpen, onClose }: CreateServiceMod
       .replace(/[^a-z0-9-]/g, "");
     form.setValue("artifact", kebabCaseName);
   }
-  
+
   // Auto-update packageName when group and artifact change
   if (watchGroup && watchArtifact && !form.getValues("packageName")) {
     form.setValue("packageName", `${watchGroup}.${watchArtifact.replace(/-/g, "")}`);
   }
-  
+
   // Handle toggling a dependency
   const toggleDependency = (dependencyId: string) => {
+    console.log("Toggling dependency:", dependencyId);
     setSelectedDependencies(prevDeps => {
       if (prevDeps.includes(dependencyId)) {
         return prevDeps.filter(dep => dep !== dependencyId);
@@ -288,7 +289,7 @@ export default function CreateServiceModal({ isOpen, onClose }: CreateServiceMod
       }
     });
   };
-  
+
   // Handle changing the service type
   const handleServiceTypeChange = (typeId: string) => {
     setSelectedServiceType(typeId);
@@ -298,9 +299,10 @@ export default function CreateServiceModal({ isOpen, onClose }: CreateServiceMod
       setSelectedDependencies(selectedType.dependencies);
     }
   };
-  
+
   // Continue to the next tab
   const handleContinue = () => {
+    console.log("Submitting form data:");
     if (currentTab === "basic") {
       // Validate required fields before proceeding
       form.trigger(["name", "group", "artifact"]).then(isValid => {
@@ -316,26 +318,20 @@ export default function CreateServiceModal({ isOpen, onClose }: CreateServiceMod
       form.handleSubmit(onSubmit)();
     }
   };
-  
+
   // Submit the form
   const onSubmit = async (data: CreateServiceFormData) => {
+    console.log("Submitting form data:", data);
     setIsSubmitting(true);
     try {
       // Update dependencies with the selected ones
       data.dependencies = selectedDependencies;
-      
-      // Create the service
-      await apiRequest("POST", "/api/services", data);
-      
-      // Invalidate services query to refresh the list
-      queryClient.invalidateQueries({ queryKey: ['/api/services'] });
-      
       // Show success toast
       toast({
         title: "Service created",
         description: `The ${data.name} microservice has been successfully created.`,
       });
-      
+
       // Reset and close
       form.reset();
       setSelectedDependencies(["web", "actuator"]);
@@ -351,7 +347,7 @@ export default function CreateServiceModal({ isOpen, onClose }: CreateServiceMod
       setIsSubmitting(false);
     }
   };
-  
+
   // Handle modal closing
   const handleModalClose = () => {
     form.reset();
@@ -359,7 +355,7 @@ export default function CreateServiceModal({ isOpen, onClose }: CreateServiceMod
     setCurrentTab("basic");
     onClose();
   };
-  
+
   return (
     <Dialog open={isOpen} onOpenChange={handleModalClose}>
       <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto">
@@ -371,7 +367,7 @@ export default function CreateServiceModal({ isOpen, onClose }: CreateServiceMod
             Configure your service, add dependencies, and integrate with cloud providers
           </DialogDescription>
         </DialogHeader>
-        
+
         <Tabs value={currentTab} onValueChange={setCurrentTab} className="w-full">
           <TabsList className="grid grid-cols-3 mb-6">
             <TabsTrigger value="basic" className="flex items-center gap-2">
@@ -393,7 +389,7 @@ export default function CreateServiceModal({ isOpen, onClose }: CreateServiceMod
               Cloud Services
             </TabsTrigger>
           </TabsList>
-          
+
           <form onSubmit={form.handleSubmit(onSubmit)}>
             {/* Basic Info Tab */}
             <TabsContent value="basic">
@@ -430,7 +426,7 @@ export default function CreateServiceModal({ isOpen, onClose }: CreateServiceMod
                           {serviceTypes.find(type => type.id === selectedServiceType)?.description}
                         </p>
                       </div>
-                      
+
                       <div>
                         <Label htmlFor="name" className="text-sm font-medium">
                           Service Name*
@@ -447,7 +443,7 @@ export default function CreateServiceModal({ isOpen, onClose }: CreateServiceMod
                           </p>
                         )}
                       </div>
-                      
+
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <Label htmlFor="group" className="text-sm font-medium">
@@ -465,7 +461,7 @@ export default function CreateServiceModal({ isOpen, onClose }: CreateServiceMod
                             </p>
                           )}
                         </div>
-                        
+
                         <div>
                           <Label htmlFor="artifact" className="text-sm font-medium">
                             Artifact*
@@ -483,7 +479,7 @@ export default function CreateServiceModal({ isOpen, onClose }: CreateServiceMod
                           )}
                         </div>
                       </div>
-                      
+
                       <div>
                         <Label htmlFor="packageName" className="text-sm font-medium">
                           Package Name
@@ -496,7 +492,7 @@ export default function CreateServiceModal({ isOpen, onClose }: CreateServiceMod
                         />
                       </div>
                     </div>
-                    
+
                     <div className="space-y-4">
                       <div>
                         <Label htmlFor="description" className="text-sm font-medium">
@@ -509,7 +505,7 @@ export default function CreateServiceModal({ isOpen, onClose }: CreateServiceMod
                           {...form.register("description")}
                         />
                       </div>
-                      
+
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <Label htmlFor="language" className="text-sm font-medium">
@@ -531,7 +527,7 @@ export default function CreateServiceModal({ isOpen, onClose }: CreateServiceMod
                             </SelectContent>
                           </Select>
                         </div>
-                        
+
                         <div>
                           <Label htmlFor="springBootVersion" className="text-sm font-medium">
                             Spring Boot
@@ -553,7 +549,7 @@ export default function CreateServiceModal({ isOpen, onClose }: CreateServiceMod
                           </Select>
                         </div>
                       </div>
-                      
+
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <Label htmlFor="buildSystem" className="text-sm font-medium">
@@ -568,9 +564,9 @@ export default function CreateServiceModal({ isOpen, onClose }: CreateServiceMod
                             </SelectTrigger>
                             <SelectContent>
                               {buildSystems.map(system => {
-                                const label = system === "maven" ? "Maven" : 
-                                            system === "gradle-groovy" ? "Gradle (Groovy)" : 
-                                            "Gradle (Kotlin)";
+                                const label = system === "maven" ? "Maven" :
+                                  system === "gradle-groovy" ? "Gradle (Groovy)" :
+                                    "Gradle (Kotlin)";
                                 return (
                                   <SelectItem key={system} value={system} textValue={label}>
                                     {label}
@@ -580,7 +576,7 @@ export default function CreateServiceModal({ isOpen, onClose }: CreateServiceMod
                             </SelectContent>
                           </Select>
                         </div>
-                        
+
                         <div>
                           <Label htmlFor="javaVersion" className="text-sm font-medium">
                             Java Version
@@ -606,15 +602,15 @@ export default function CreateServiceModal({ isOpen, onClose }: CreateServiceMod
                   </div>
                 </CardContent>
                 <CardFooter className="flex justify-between border-t pt-4">
-                  <Button 
-                    type="button" 
-                    variant="outline" 
+                  <Button
+                    type="button"
+                    variant="outline"
                     onClick={handleModalClose}
                   >
                     Cancel
                   </Button>
-                  <Button 
-                    type="button" 
+                  <Button
+                    type="button"
                     onClick={handleContinue}
                     className="bg-gradient-to-r from-green-600 to-blue-600 text-white"
                   >
@@ -623,7 +619,7 @@ export default function CreateServiceModal({ isOpen, onClose }: CreateServiceMod
                 </CardFooter>
               </Card>
             </TabsContent>
-            
+
             {/* Dependencies Tab */}
             <TabsContent value="dependencies">
               <Card>
@@ -651,22 +647,22 @@ export default function CreateServiceModal({ isOpen, onClose }: CreateServiceMod
                             }
                           }
                           return (
-                            <Badge 
-                              key={depId} 
+                            <Badge
+                              key={depId}
                               variant="secondary"
                               className="cursor-pointer"
                               onClick={() => toggleDependency(depId)}
                             >
-                              {depName} ×
+                              {depName}
                             </Badge>
                           );
                         })
                       )}
                     </div>
                   </div>
-                  
+
                   <Separator className="my-4" />
-                  
+
                   <Accordion type="single" collapsible className="w-full">
                     {springBootDependencies.map((category, index) => (
                       <AccordionItem key={category.category} value={`item-${index}`}>
@@ -682,16 +678,14 @@ export default function CreateServiceModal({ isOpen, onClose }: CreateServiceMod
                         <AccordionContent>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 py-2">
                             {category.dependencies.map(dependency => (
-                              <div 
+                              <div
                                 key={dependency.id}
-                                className={`flex items-start space-x-2 rounded-lg border p-3 hover:bg-muted cursor-pointer transition-colors ${
-                                  selectedDependencies.includes(dependency.id) ? 'bg-primary/5 border-primary/50' : ''
-                                }`}
-                                onClick={() => toggleDependency(dependency.id)}
+                                className={`flex items-start space-x-2 rounded-lg border p-3 hover:bg-muted cursor-pointer transition-colors ${selectedDependencies.includes(dependency.id) ? 'bg-primary/5 border-primary/50' : ''
+                                  }`}
                               >
                                 <Checkbox
                                   checked={selectedDependencies.includes(dependency.id)}
-                                  onCheckedChange={() => {}}
+                                  onCheckedChange={() => toggleDependency(dependency.id)}
                                   className="mt-1"
                                 />
                                 <div className="space-y-1">
@@ -709,15 +703,15 @@ export default function CreateServiceModal({ isOpen, onClose }: CreateServiceMod
                   </Accordion>
                 </CardContent>
                 <CardFooter className="flex justify-between border-t pt-4">
-                  <Button 
-                    type="button" 
-                    variant="outline" 
+                  <Button
+                    type="button"
+                    variant="outline"
                     onClick={() => setCurrentTab("basic")}
                   >
                     Back
                   </Button>
-                  <Button 
-                    type="button" 
+                  <Button
+                    type="button"
                     onClick={handleContinue}
                     className="bg-gradient-to-r from-green-600 to-blue-600 text-white"
                   >
@@ -726,7 +720,7 @@ export default function CreateServiceModal({ isOpen, onClose }: CreateServiceMod
                 </CardFooter>
               </Card>
             </TabsContent>
-            
+
             {/* Cloud Services Tab */}
             <TabsContent value="cloud">
               <Card>
@@ -744,19 +738,17 @@ export default function CreateServiceModal({ isOpen, onClose }: CreateServiceMod
                           <CloudCog className="h-5 w-5 mr-2 text-primary" />
                           <h3 className="text-lg font-semibold">{provider.name}</h3>
                         </div>
-                        
+
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                           {provider.dependencies.map(service => (
-                            <div 
+                            <div
                               key={service.id}
-                              className={`flex items-start space-x-2 rounded-lg border p-3 hover:bg-muted cursor-pointer transition-colors ${
-                                selectedDependencies.includes(service.id) ? 'bg-primary/5 border-primary/50' : ''
-                              }`}
-                              onClick={() => toggleDependency(service.id)}
+                              className={`flex items-start space-x-2 rounded-lg border p-3 hover:bg-muted cursor-pointer transition-colors ${selectedDependencies.includes(service.id) ? 'bg-primary/5 border-primary/50' : ''
+                                }`}
                             >
                               <Checkbox
                                 checked={selectedDependencies.includes(service.id)}
-                                onCheckedChange={() => {}}
+                                onCheckedChange={() => toggleDependency(service.id)}
                                 className="mt-1"
                               />
                               <div className="space-y-1">
@@ -778,14 +770,14 @@ export default function CreateServiceModal({ isOpen, onClose }: CreateServiceMod
                   </div>
                 </CardContent>
                 <CardFooter className="flex justify-between border-t pt-4">
-                  <Button 
-                    type="button" 
-                    variant="outline" 
+                  <Button
+                    type="button"
+                    variant="outline"
                     onClick={() => setCurrentTab("dependencies")}
                   >
                     Back
                   </Button>
-                  <Button 
+                  <Button
                     type="submit"
                     disabled={isSubmitting}
                     className="bg-gradient-to-r from-green-600 to-blue-600 text-white"
